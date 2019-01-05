@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Ship detection infrastructure
+Parameters:
+  OutputBucketName:
+    Description: Name of the S3 bucket for output files
+    Type: String
+Resources:
+  ShipDetectionNotebook:
+    Type: "AWS::SageMaker::NotebookInstance"
+    Properties:
+      NotebookInstanceName: "ShipDetectionNotebook"
+      InstanceType: "ml.c5.xlarge"
+      RoleArn: !GetAtt ExecutionRole.Arn
+      Tags:
+        -
+          Key: "project"
+          Value: "ship-detection"
+        - Key: "demo"
+          Value: "true"
+  ExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "sagemaker.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+      # Policies:
+      #   -
+      #     PolicyName: "root"
+      #     PolicyDocument:
+      #       Version: "2012-10-17"
+      #       Statement:
+      #         -
+      #           Effect: "Allow"
+      #           Action: "*"
+      #           Resource: "*"
+  ShipDetectionData:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref OutputBucketName
+      Tags:
+        -
+          Key: "project"
+          Value: "ship-detection"
+        - Key: "demo"
+          Value: "true"
+    DeletionPolicy: Retain
+Outputs:
+  BucketName:
+    Value: !Ref 'ShipDetectionData'
+    Description: Name of the Amazon S3 bucket.
