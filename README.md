@@ -1,3 +1,7 @@
+Here is the final output of the project:
+
+![Final output](final_output.png)
+
 ## Process
 
 #### Step 1: Create infrastructure
