@@ -7,15 +7,15 @@ Here is the final output of the project:
 #### Step 1: Create infrastructure
 
 1. Creates SageMaker notebook instance, IAM role, S3 bucket for output
-```
+```bash
 aws cloudformation create-stack --stack-name ShipDetection --template-body file://cloudformation/infrastructure.yaml --capabilities CAPABILITY_NAMED_IAM
 ```
 2. Check the status until you receive "CREATE_COMPLETE"
-```
+```bash
 aws cloudformation describe-stacks --stack-name ShipDetection --query 'Stacks[0].StackStatus'
 ```
 3. Keep track of the S3 bucket name
-```
+```bash
 aws cloudformation describe-stacks --stack-name ShipDetection --query 'Stacks[0].Outputs[0].OutputValue
 ```
 
@@ -53,23 +53,23 @@ _Added time: 6 hours (mostly waiting)_
 2. Install Kaggle API
 3. Provide API credentials locally
 4. Download the data
-  ```
+  ```bash
   kaggle competitions download -c airbus-ship-detection
   ```
 5. Unzip training data
-  ```
+  ```bash
   mkdir training && unzip -qo .zip -d training
   ```
 6. Unzip test data
-  ```
+  ```bash
   mkdir test && unzip -qo .zip -d test
   ```
 7. Upload training data
-  ```
+  ```bash
   aws s3 sync training s3://your-bucket-name/training/
   ```
 8. Upload test data
-  ```
+  ```bash
   aws s3 sync test s3://your-bucket-name/test/
   ```
 
@@ -100,34 +100,34 @@ _Added time: 1-2 hours_
 
 ## Clean up
 1. Tear down the CloudFormation stack
-```
+```bash
 aws cloudformation delete-stack --stack-name ShipDetection
 ```
 2. Remove the SageMaker endpoint (this will rack up your bill!)
   1. Make sure you only have the one endpoint
-    ```
+    ```bash
     aws sagemaker list-endpoints
     ```
   2. Assuming you do, list the endpoints again and pass the first one into a delete command
-    ```
+    ```bash
     aws sagemaker list-endpoints --query 'Endpoints[0].EndpointName' --output text | xargs -I {} aws sagemaker delete-endpoint --endpoint-name {}
     ```
 3. Remove the SageMaker model
   1. Make sure you only have the one model
-  ```
+  ```bash
   aws sagemaker list-models --query 'Models[0].ModelName' --output text
   ```
   2. Assuming you do, list the models again and pass the first one into a delete command
-  ```
+  ```bash
   aws sagemaker list-models --query 'Models[0].ModelName' --output text | xargs -I {} aws sagemaker delete-model --model-name {}
   ```
 4. Remove the SageMaker endpoint configs
   1. Make sure you only have the one config
-  ```
+  ```bash
   aws sagemaker list-endpoint-configs --query 'EndpointConfigs[0].EndpointConfigName' --output text
   ```
   2. Assuming you do, list the configs again and pass the first one into a delete command
-  ```
+  ```bash
   aws sagemaker list-endpoint-configs --query 'EndpointConfigs[0].EndpointConfigName' --output text | xargs -I {} aws sagemaker delete-endpoint-config --endpoint-config-name {}
   ```
 

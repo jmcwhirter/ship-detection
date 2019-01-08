@@ -1,1 +1,16 @@
 .DS_Store
+
+# Python virtual environments
+env[2-3]
+
+# Python
+*.pyc
+
+# Output
+*.jpg
+
+# Zappa
+*dev-template*.json
+
+# IDE Stuff
+.idea
