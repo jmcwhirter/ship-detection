@@ -13,9 +13,6 @@
                 {{ form.submit() }}
                 {{ form.csrf_token }}
             </p>
-            <p>
-                {% if result != None %}
-                <img src="data:image/png;base64,{{ result }}">
-                {% endif %}
-            </p>
     </form>
+
+{% endblock %}

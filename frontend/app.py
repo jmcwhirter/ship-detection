@@ -11,24 +11,35 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
+class PredictForm(FlaskForm):
+    image_url = StringField('Image', validators=[DataRequired()])
+    threshold = StringField('Threshold', validators=[DataRequired()])
+    submit = SubmitField('Predict')
 
 app = Flask(__name__)
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
 runtime = boto3.client('runtime.sagemaker')
 
 # here is how we are handling routing with flask:
 @app.route('/')
 def index():
-    return "Hello World!", 200
+    form = PredictForm()
+    return render_template('index.html', title='Ahoy!', form=form)
 
 @app.route('/prediction', methods=["GET","POST"])
 def user():
     resp_dict = {}
     if request.method == "GET":
-        image_url = request.args.get('image')
+        image_url = request.args.get('image_url')
         threshold = request.args.get('threshold')
     if request.method == "POST":
         data = request.form
-        image_url = data.get('image','')
+        image_url = data.get('image_url','')
         threshold = data.get('threshold','')
     threshold = float(threshold)
 
