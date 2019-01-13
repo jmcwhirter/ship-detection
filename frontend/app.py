@@ -1,12 +1,14 @@
-from flask import Flask, json, request, render_template
-import os
-import io
 import base64
-import boto3
+import io
 import json
+import os
 import random
-import requests
+
+import boto3
 import matplotlib
+import requests
+from flask import Flask, json, request, render_template
+
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
