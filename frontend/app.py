@@ -1,4 +1,4 @@
-from flask import Flask, Response, json, request, render_template
+from flask import Flask, json, request, render_template
 import os
 import io
 import base64
@@ -10,7 +10,6 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from PIL import Image
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -33,7 +32,7 @@ def index():
 
 @app.route('/prediction', methods=["GET","POST"])
 def user():
-    resp_dict = {}
+    form = PredictForm()
     if request.method == "GET":
         image_url = request.args.get('image_url')
         threshold = request.args.get('threshold')
@@ -51,21 +50,15 @@ def user():
     response = runtime.invoke_endpoint(EndpointName='object-detection-2019-01-05-23-14-23-715',
                                       ContentType='image/jpeg',
                                       Body=img_data)
-    # print(response)
-    result = json.loads(response['Body'].read().decode())
-    # print(result)
-
-    object_categories = ['ship']
-    # Setting a threshold 0.20 will only plot detection results that have a confidence score greater than 0.20.
-
-    output_file = 'prediction.jpg'
 
     # Visualize the detections.
-    encoded_image = visualize_detection(input_file, output_file, result['prediction'], object_categories, threshold)
+    result = json.loads(response['Body'].read().decode())
+    object_categories = ['ship']
+    encoded_image = visualize_detection(input_file, result['prediction'], object_categories, threshold)
 
-    return render_template('output.html', result=encoded_image)
+    return render_template('output.html', result=encoded_image, form=form)
 
-def visualize_detection(img_file, output_file, dets, classes=[], thresh=0.90):
+def visualize_detection(img_file, dets, classes=[], thresh=0.90):
     img=mpimg.imread(img_file)
     plt.imshow(img)
     height = img.shape[0]
@@ -94,17 +87,11 @@ def visualize_detection(img_file, output_file, dets, classes=[], thresh=0.90):
                         '{:s} {:.3f}'.format(class_name, score),
                         bbox=dict(facecolor=colors[cls_id], alpha=0.5),
                                 fontsize=12, color='white')
-    # plt.imshow()
-    plt.savefig(output_file)
-    # im = Image.open(output_file)
     stream = io.BytesIO()
-    # format = Image.registered_extensions()['.jpg']
-    # im.save(stream,format)
     plt.savefig(stream)
-    stream.seek(0)
+    # stream.seek(0)
     return base64.b64encode(stream.getvalue())
 
 # include this for local dev
-
 if __name__ == '__main__':
     app.run()

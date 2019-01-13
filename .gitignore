@@ -2,6 +2,7 @@
 
 # Python virtual environments
 env[2-3]
+venv
 
 # Python
 *.pyc
