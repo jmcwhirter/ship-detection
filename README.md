@@ -50,7 +50,7 @@ _Added time: 6 hours (mostly waiting)_
 
 1. Spin up an EC2 instance or perform the instructions locally
 2. Install python3 & pip3
-2. Install Kaggle API
+2. [Install Kaggle API](https://github.com/Kaggle/kaggle-api)
 3. Provide API credentials locally
 4. Download the data
   ```bash
